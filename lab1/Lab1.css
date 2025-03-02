@@ -1,0 +1,120 @@
+body {
+    font-family: sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #ffffff;
+    /* фон */
+    background-image: url("resources/background.webp");
+    background-size: cover; /* заполнение всего фонаа */
+    background-repeat: no-repeat;
+    background-attachment: fixed; /* фиксируем фон при прокрутке */
+}
+
+header {
+    background-color: #000000;
+    color: #3D134E;
+    padding: 0.01rem 0; /* отступы сверху и снизу */
+    text-align: center;
+    background-image: url("resources/header.png");
+    background-position: -100px -50px;
+}
+
+h1 {
+    font-family: sans-serif;
+    font-size: 2em;
+    animation: fadeIn 1s ease-in-out; /* fast-speed-slowly */
+}
+
+h2, h3 {
+    animation: fadeIn 2s ease-in-out;
+    text-align: center;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0; /* нач.прозрачность */
+        transform: translateY(-20px); /* смещение вверх */
+    }
+    to {
+        opacity: 1; /* кон.прозрачность */
+        transform: translateY(0); /* конечное положение */
+    }
+}
+
+main {
+    max-width: 800px;
+    margin: 20px auto; /* отступ сверху и снизу + автовыравнивание */
+    padding: 20px; /* отступ справа и слева */
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 15px; /* закругление углов */
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+.fact {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+}
+.fact:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* абзацы текста */
+p {
+    font-size: 1.1em;
+    text-align: justify; /* выравнивание по ширине */
+}
+
+/* цитаты */
+blockquote {
+    font-style: italic; /* курсив */
+    padding: 10px;
+    margin: 10px 0;
+    border-left: 4px solid #3D134E;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* таблица */
+table {
+    width: 100%;
+    border-collapse: collapse; /* -двойные границы у ячеек */
+}
+/* заголовки и ячейки */
+th, td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ffffff;
+}
+th {
+    background: #1c0029;
+}
+tr:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+img {
+    max-width: 100%;
+    max-height: 300px;
+    height: auto; /* сохранение пропорции при изменении */
+    display: block; /* чтоб работало центрирование - откл лишних отступов */
+    margin: 0 auto;
+    object-fit: contain;
+    border-radius: 10px;
+}
+
+footer {
+    /*text-align: center; не работает -_-*/
+    display: flex;
+    justify-content: center; /* центрирует по горизонтали */
+    align-items: center; /* центрирует по вертикали */
+    padding: 5px;
+    background: rgba(0, 0, 0, 0.8);
+    font-size: 0.9em;
+}
