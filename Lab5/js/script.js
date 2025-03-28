@@ -25,6 +25,10 @@ class BaseBlock {
     render() {
         return "";
     }
+
+    static find(id) {
+        return blocksList.find(b => b.id === id);
+    }
 }
 
 class TextBlock extends BaseBlock {
@@ -48,6 +52,22 @@ class ListBlock extends BaseBlock {
         this.items = items;
     }
 
+    addItem() {
+        this.items.push("Новое оружие");
+        saveBlocks();
+        renderPage();
+    }
+
+    deleteItem(idx) {
+        this.items.splice(idx, 1);
+        saveBlocks();
+        renderPage();
+    }
+
+    static find(id) {
+        return super.find(id) instanceof ListBlock ? super.find(id) : null;
+    }
+
     render() {
         const isEdit = document.body.classList.contains("editing");
         const listHTML = `<ul>
@@ -56,10 +76,10 @@ class ListBlock extends BaseBlock {
           <span ${isEdit ? `contenteditable="true" oninput="editListItem('${this.id}', ${idx}, this.textContent)"` : ""}>
             ${el}
           </span>
-          ${isEdit ? `<button class="remove-item" onclick="deleteListItem('${this.id}', ${idx})">&times;</button>` : ""}
+          ${isEdit ? `<button class="remove-item" onclick="ListBlock.find('${this.id}').deleteItem(${idx})">&times;</button>` : ""}
         </li>`).join("")}
     </ul>`;
-        const addBtn = isEdit ? `<button class="add-item" onclick="addListItem('${this.id}')">Добавить оружие</button>` : "";
+        const addBtn = isEdit ? `<button class="add-item" onclick="ListBlock.find('${this.id}').addItem()">Добавить оружие</button>` : "";
         return this.renderCard(this.renderTitle() + listHTML + addBtn);
     }
 }
@@ -68,6 +88,24 @@ class StatsBlock extends BaseBlock {
     constructor(id, title, stats = {}) {
         super(id, title);
         this.stats = stats;
+    }
+
+    addStat() {
+        let newKey = "Новая способность", count = 1;
+        while (this.stats[newKey]) newKey = `Новая способность ${count++}`;
+        this.stats[newKey] = 0;
+        saveBlocks();
+        renderPage();
+    }
+
+    deleteStat(key) {
+        delete this.stats[key];
+        saveBlocks();
+        renderPage();
+    }
+
+    static find(id) {
+        return super.find(id) instanceof StatsBlock ? super.find(id) : null;
     }
 
     render() {
@@ -80,9 +118,9 @@ class StatsBlock extends BaseBlock {
         <span class="stat-value" ${isEdit ? `contenteditable="true" oninput="changeStatVal('${this.id}', '${key}', this.textContent)"` : ""}>
           ${val}
         </span>
-        ${isEdit ? `<button class="remove-item" onclick="deleteStat('${this.id}', '${key}')">&times;</button>` : ""}
+        ${isEdit ? `<button class="remove-item" onclick="StatsBlock.find('${this.id}').deleteStat('${key}')">&times;</button>` : ""}
       </div>`).join("");
-        const addBtn = isEdit ? `<button class="add-item" onclick="addStat('${this.id}')">Добавить способность</button>` : "";
+        const addBtn = isEdit ? `<button class="add-item" onclick="StatsBlock.find('${this.id}').addStat()">Добавить способность</button>` : "";
         return this.renderCard(this.renderTitle() + statsHTML + addBtn);
     }
 }
@@ -148,7 +186,7 @@ const toggleEditing = () => {
 };
 
 const updateTitle = (id, txt) => {
-    const b = blocksList.find(b => b.id === id);
+    const b = BaseBlock.find(id);
     if (b) {
         b.title = txt;
         saveBlocks();
@@ -156,7 +194,7 @@ const updateTitle = (id, txt) => {
 };
 
 const updateContent = (id, txt) => {
-    const b = blocksList.find(b => b.id === id);
+    const b = BaseBlock.find(id);
     if (b && "content" in b) {
         b.content = txt;
         saveBlocks();
@@ -164,16 +202,16 @@ const updateContent = (id, txt) => {
 };
 
 const editListItem = (id, idx, txt) => {
-    const b = blocksList.find(b => b.id === id);
-    if (b && b.items) {
+    const b = ListBlock.find(id);
+    if (b) {
         b.items[idx] = txt;
         saveBlocks();
     }
 };
 
 const changeStatKey = (id, oldKey, newKey) => {
-    const b = blocksList.find(b => b.id === id);
-    if (b && b.stats) {
+    const b = StatsBlock.find(id);
+    if (b) {
         const newStats = {};
         Object.entries(b.stats).forEach(([k, v]) => newStats[k === oldKey ? newKey : k] = v);
         b.stats = newStats;
@@ -183,8 +221,8 @@ const changeStatKey = (id, oldKey, newKey) => {
 };
 
 const changeStatVal = (id, key, txt) => {
-    const b = blocksList.find(b => b.id === id);
-    if (b && b.stats) {
+    const b = StatsBlock.find(id);
+    if (b) {
         b.stats[key] = txt;
         saveBlocks();
     }
@@ -211,44 +249,6 @@ const removeBlock = id => {
     blocksList = blocksList.filter(b => b.id !== id);
     saveBlocks();
     renderPage();
-};
-
-const addListItem = id => {
-    const b = blocksList.find(b => b.id === id);
-    if (b && b.items) {
-        b.items.push("Новое оружие");
-        saveBlocks();
-        renderPage();
-    }
-};
-
-const deleteListItem = (id, idx) => {
-    const b = blocksList.find(b => b.id === id);
-    if (b && b.items) {
-        b.items.splice(idx, 1);
-        saveBlocks();
-        renderPage();
-    }
-};
-
-const addStat = id => {
-    const b = blocksList.find(b => b.id === id);
-    if (b && b.stats) {
-        let newKey = "Новая способность", count = 1;
-        while (b.stats[newKey]) newKey = `Новая способность ${count++}`;
-        b.stats[newKey] = 0;
-        saveBlocks();
-        renderPage();
-    }
-};
-
-const deleteStat = (id, key) => {
-    const b = blocksList.find(b => b.id === id);
-    if (b && b.stats) {
-        delete b.stats[key];
-        saveBlocks();
-        renderPage();
-    }
 };
 
 const resetData = () => {
