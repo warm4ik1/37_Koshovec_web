@@ -66,15 +66,15 @@ const callApi = (api, method) => {
         } else if (method === "POST") {
             url = "https://jsonplaceholder.typicode.com/posts";
             options.headers = {"Content-Type": "application/json; charset=UTF-8"};
-            options.body = JSON.stringify({title: "foo", body: "bar", userId: 1});
+            options.body = JSON.stringify({title: "test_post", body: "bar", userId: 1});
         } else if (method === "PUT") {
             url = "https://jsonplaceholder.typicode.com/posts/1";
             options.headers = {"Content-Type": "application/json; charset=UTF-8"};
-            options.body = JSON.stringify({id: 1, title: "foo", body: "bar", userId: 1});
+            options.body = JSON.stringify({id: 1, title: "test_put", body: "bar", userId: 1});
         } else if (method === "PATCH") {
             url = "https://jsonplaceholder.typicode.com/posts/1";
             options.headers = {"Content-Type": "application/json; charset=UTF-8"};
-            options.body = JSON.stringify({title: "foo"});
+            options.body = JSON.stringify({title: "test_patch"});
         } else if (method === "DELETE") {
             url = "https://jsonplaceholder.typicode.com/posts/1";
         }
@@ -87,7 +87,14 @@ const callApi = (api, method) => {
     }
 
     fetch(url, options)
-        .then((response) => response.json())
+        .then((response) => {
+            if (!response.ok) {
+                return response.text().then((text) => {
+                    throw new Error(`HTTP error ${response.status}: ${text}`);
+                });
+            }
+            return response.json();
+        })
         .then((data) => {
             if (api === "dog") {
                 resultDiv.innerHTML = `<img src="${data.message}" alt="Dog Image" style="max-width:100%; border-radius:8px;">`;
