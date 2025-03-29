@@ -103,6 +103,6 @@ const callApi = (api, method) => {
             }
         })
         .catch((error) => {
-            resultDiv.innerHTML = `<p>Ошибка: ${error}</p>`;
+            resultDiv.innerHTML = `<p>Ошибка: ${error.message}</p>`;
         });
 };
